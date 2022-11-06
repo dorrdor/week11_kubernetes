@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nwtapp
+  labels:
+    app: dorrdorsela
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: dorrdorsela
+  template:
+    metadata:
+      labels:
+        app: dorrdorsela
+    spec:
+      containers:
+      - name: nwtapp
+        image: dorrdorsela/dorrdorsela:100
+        ports:
+        - containerPort: 8080
