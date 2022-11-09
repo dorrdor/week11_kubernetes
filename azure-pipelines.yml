@@ -1,0 +1,64 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  name: k8s_pool
+
+stages:
+- stage: CI
+  jobs:
+  - job: k8s_deploy
+    workspace:
+      clean: all
+    steps:
+    - task: Kubernetes@1
+      inputs:
+        connectionType: 'Azure Resource Manager'
+        azureSubscriptionEndpoint: 'Azure Pass - Sponsorship(dc2777c1-8728-4fe2-b931-baea6c8314c3)'
+        azureResourceGroup: 'wnt_k8s_RG'
+        kubernetesCluster: 'wnt_k8s_cluster'
+        namespace: 'wnt-ns'
+        command: 'login'
+      
+    - task: Kubernetes@1
+      inputs:
+        connectionType: 'Kubernetes Service Connection'
+        kubernetesServiceEndpoint: 'wnt_k8s_connection'
+        namespace: 'wnt-ns'
+        command: 'apply'
+        useConfigurationFile: true
+        configuration: 'kubeapp.yaml'
+        secretType: 'dockerRegistry'
+        containerRegistryType: 'Azure Container Registry'
+
+    - task: Kubernetes@1
+      inputs:
+        connectionType: 'Kubernetes Service Connection'
+        kubernetesServiceEndpoint: 'wnt_k8s_connection'
+        namespace: 'wnt-ns'
+        command: 'apply'
+        useConfigurationFile: true
+        configuration: 'service.yaml'
+        secretType: 'dockerRegistry'
+        containerRegistryType: 'Azure Container Registry'
+
+    - task: Kubernetes@1
+      inputs:
+        connectionType: 'Kubernetes Service Connection'
+        kubernetesServiceEndpoint: 'wnt_k8s_connection'
+        namespace: 'wnt-ns'
+        command: 'create'
+        arguments: 'kubectl create namespace ingress_controller'
+        secretType: 'dockerRegistry'
+        containerRegistryType: 'Azure Container Registry'
+      
+    
+          
+        
+        
+        

@@ -1,0 +1,5 @@
+Dockerfile
+ansible/
+azure-pipelines.yml
+env_vars
+**/ansible_vars
